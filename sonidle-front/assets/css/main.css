@@ -1,2 +1,24 @@
 @import "../../node_modules/tailwindcss";
 @import "../../node_modules/@nuxt/ui";
+
+body {
+    font-family: Roboto, sans-serif;
+
+    button {
+        cursor: pointer;
+    }
+}
+
+@theme static {
+    --color-customPrimary-50: #E3CDF8;
+    --color-customPrimary-100: #D9BBF6;
+    --color-customPrimary-200: #C597F1;
+    --color-customPrimary-300: #B273EC;
+    --color-customPrimary-400: #9E4FE7;
+    --color-customPrimary-500: #8A2BE2;
+    --color-customPrimary-600: #6E1ABB;
+    --color-customPrimary-700: #51138A;
+    --color-customPrimary-800: #340C59;
+    --color-customPrimary-900: #170527;
+    --color-customPrimary-950: #09020F;
+}
