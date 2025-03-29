@@ -3,5 +3,8 @@
     "sub_description": "Create a game in one click or join an existing game",
     "create_game": "Create game",
     "join_game": "Join game",
-    "nickname": "Nickname"
+    "nickname": "Nickname",
+    "players_number": "Number of players",
+    "round_duration": "Round duration",
+    "confirm": "Confirm"
 }

@@ -3,5 +3,8 @@
     "sub_description": "Créez une partie en un clic ou rejoignez une partie existante",
     "create_game": "Créer une partie",
     "join_game": "Rejoindre une partie",
-    "nickname": "Pseudo"
+    "nickname": "Pseudo",
+    "players_number": "Nombre de joueurs",
+    "round_duration": "Durée d'un tour",
+    "confirm": "Confirmer"
 }
