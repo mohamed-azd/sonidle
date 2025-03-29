@@ -4,6 +4,11 @@ export default defineNuxtConfig({
     devtools: {enabled: true},
     modules: ['@nuxt/icon', '@nuxt/ui', '@nuxt/fonts', '@nuxt/image', '@nuxtjs/i18n'],
     css: ['assets/css/main.css'],
+    app: {
+        head: {
+            link: [{ rel: 'icon', type: 'image/png', href: 'logo_without_text.png' }],
+        }
+    },
     ssr: true,
     routeRules: {
         '/': {prerender: true},
