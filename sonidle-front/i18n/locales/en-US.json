@@ -6,5 +6,8 @@
     "nickname": "Nickname",
     "players_number": "Number of players",
     "round_duration": "Round duration",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "join": "Join",
+    "paste_game_code": "Paste the game code here !",
+    "code": "Code"
 }
