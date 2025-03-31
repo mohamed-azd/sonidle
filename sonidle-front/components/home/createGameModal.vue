@@ -6,6 +6,8 @@ const props = defineProps({
 });
 const emit = defineEmits(["update:modelValue"]);
 
+const router = useRouter();
+
 const isOpen = computed({
   get: () => props.modelValue,
   set: (value) => emit("update:modelValue", value)
@@ -34,7 +36,7 @@ const roundDuration = ref(30)
     </template>
     <template #footer>
       <div class="w-full flex justify-end">
-        <UButton @click="isOpen = false" size="lg" :label="$t('confirm')"></UButton>
+        <UButton size="lg" :label="$t('confirm')" @click="router.push('/app/rooms/1')" />
       </div>
     </template>
   </UModal>
