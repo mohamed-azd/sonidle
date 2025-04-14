@@ -17,6 +17,9 @@ services:
     networks:
       - sonidle-back-net
 
+volumes:
+  redis-insight:
+
 networks:
   sonidle-back-net:
     driver: bridge
