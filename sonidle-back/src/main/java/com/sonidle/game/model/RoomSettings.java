@@ -14,4 +14,36 @@ public class RoomSettings implements Serializable {
     private int nbPlayersMax;
     private int gameDuration;
     private List<MusicGenre> genres;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public int getNbPlayersMax() {
+        return nbPlayersMax;
+    }
+
+    public void setNbPlayersMax(int nbPlayersMax) {
+        this.nbPlayersMax = nbPlayersMax;
+    }
+
+    public int getGameDuration() {
+        return gameDuration;
+    }
+
+    public void setGameDuration(int gameDuration) {
+        this.gameDuration = gameDuration;
+    }
+
+    public List<MusicGenre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<MusicGenre> genres) {
+        this.genres = genres;
+    }
 }
