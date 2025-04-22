@@ -3,7 +3,7 @@ package com.sonidle.game.payload;
 public class CreateRoomPayload {
     private String playerName;
     private int nbPlayersMax;
-    private int gameDuration;
+    private int roundDuration;
 
     public String getPlayerName() {
         return playerName;
@@ -21,11 +21,11 @@ public class CreateRoomPayload {
         this.nbPlayersMax = nbPlayersMax;
     }
 
-    public int getGameDuration() {
-        return gameDuration;
+    public int getRoundDuration() {
+        return roundDuration;
     }
 
-    public void setGameDuration(int gameDuration) {
-        this.gameDuration = gameDuration;
+    public void setRoundDuration(int roundDuration) {
+        this.roundDuration = roundDuration;
     }
 }

@@ -12,7 +12,7 @@ public class RoomSettings implements Serializable {
     @Id
     private UUID id;
     private int nbPlayersMax;
-    private int gameDuration;
+    private int roundDuration;
     private List<MusicGenre> genres;
 
     public UUID getId() {
@@ -31,12 +31,12 @@ public class RoomSettings implements Serializable {
         this.nbPlayersMax = nbPlayersMax;
     }
 
-    public int getGameDuration() {
-        return gameDuration;
+    public int getRoundDuration() {
+        return roundDuration;
     }
 
-    public void setGameDuration(int gameDuration) {
-        this.gameDuration = gameDuration;
+    public void setRoundDuration(int roundDuration) {
+        this.roundDuration = roundDuration;
     }
 
     public List<MusicGenre> getGenres() {

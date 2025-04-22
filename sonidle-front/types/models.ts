@@ -1,17 +1,17 @@
 export interface Room {
-    id: String;
+    id: string;
     settings: RoomSettings;
     players: Player[];
 }
 
 export interface RoomSettings {
-    id: String;
+    id: string;
     nbPlayerMax: number;
     gameDuration: number;
 }
 
 export interface Player {
-    id: String;
+    id: string;
     name: string;
     score: number;
     owner: boolean;

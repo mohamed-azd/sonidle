@@ -1,5 +1,6 @@
 package com.sonidle.game.controller;
 
+import com.sonidle.game.dto.SocketRoomDTO;
 import com.sonidle.game.model.Room;
 import com.sonidle.game.payload.CreateRoomPayload;
 import com.sonidle.game.repository.RoomRepository;
@@ -24,7 +25,7 @@ public class RoomController {
     }
 
     @PostMapping
-    public Room createRoom(@RequestBody CreateRoomPayload payload) {
+    public SocketRoomDTO createRoom(@RequestBody CreateRoomPayload payload) {
         return roomService.create(payload);
     }
 }

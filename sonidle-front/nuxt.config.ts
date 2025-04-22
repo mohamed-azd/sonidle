@@ -3,12 +3,22 @@
 export default defineNuxtConfig({
     compatibilityDate: '2024-11-01',
     devtools: {enabled: true},
-    modules: ['@nuxt/icon', '@nuxt/ui', '@nuxt/fonts', '@nuxt/image', '@nuxtjs/i18n'],
+    modules: ['@nuxt/icon', '@nuxt/ui', '@nuxt/fonts', '@nuxt/image', '@nuxtjs/i18n', '@pinia/nuxt'],
     css: ['assets/css/main.css'],
     app: {
         head: {
             link: [{ rel: 'icon', type: 'image/png', href: 'logo_without_text.png' }],
+            script: [
+                {
+                    innerHTML: 'window.global = window;',
+                    type: 'text/javascript',
+                    tagPosition: 'head',
+                }
+            ]
         }
+    },
+    pinia: {
+        storesDirs: ['./stores/**'],
     },
     ssr: true,
     routeRules: {

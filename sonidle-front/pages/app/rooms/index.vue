@@ -2,17 +2,17 @@
 
 import PlayerCard from "~/components/room/PlayerCard.vue";
 import {useRoomSocket} from "~/composables/useRoomSocket";
+import type {Room} from "~/types/models";
+import {useRoomStore} from "~/stores/room";
 
-const route = useRoute();
-const roomId: string = route.params.id;
+const { $pinia } = useNuxtApp();
 
-onMounted( () => {
-  console.log(route.params.id);
-})
+onMounted(() => {
+  useRoomSocket(useRoomStore().room.id, (updatedRoom) => {
+    console.log(updatedRoom);
+  })
 
-useRoomSocket(roomId, (room) => {
-  console.log("WS ----------------")
-  console.log(room)
+  console.log(useRoomStore().room.id);
 })
 </script>
 

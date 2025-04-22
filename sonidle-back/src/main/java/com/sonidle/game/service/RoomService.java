@@ -10,7 +10,6 @@ import com.sonidle.game.repository.RoomRepository;
 import com.sonidle.game.repository.RoomSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -34,14 +33,14 @@ public class RoomService {
         return roomRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
-    public Room create(CreateRoomPayload payload) {
+    public SocketRoomDTO create(CreateRoomPayload payload) {
         Room room = new Room();
         room.setId(UUIDService.generate(roomRepository));
 
         RoomSettings roomSettings = new RoomSettings();
         roomSettings.setId(UUIDService.generate(roomSettingsRepository));
         roomSettings.setNbPlayersMax(payload.getNbPlayersMax());
-        roomSettings.setGameDuration(payload.getGameDuration());
+        roomSettings.setRoundDuration(payload.getRoundDuration());
         room.setSettings(roomSettings);
 
         Player owner = new Player();
@@ -54,9 +53,11 @@ public class RoomService {
         roomSettingsRepository.save(roomSettings);
         roomRepository.save(room);
 
-        createSocket(SocketRoomDTO.toDTO(room, List.of(owner), List.of()));
+        SocketRoomDTO socketRoomDTO = SocketRoomDTO.toDTO(room, List.of(owner), List.of());
 
-        return room;
+        createSocket(socketRoomDTO);
+
+        return socketRoomDTO;
     }
 
     private void createSocket(SocketRoomDTO room) {
