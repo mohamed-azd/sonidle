@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
 export default defineNuxtConfig({
     compatibilityDate: '2024-11-01',
     devtools: {enabled: true},
@@ -44,6 +45,12 @@ export default defineNuxtConfig({
             cookieKey: 'i18n_redirected',
             alwaysRedirect: true,
             fallbackLocale: 'en-US',
+        }
+    },
+    runtimeConfig: {
+        public: {
+            apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
+            wsUrl: process.env.NUXT_PUBLIC_WS_URL,
         }
     }
 })

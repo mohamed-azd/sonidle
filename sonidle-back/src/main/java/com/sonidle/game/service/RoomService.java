@@ -60,6 +60,6 @@ public class RoomService {
     }
 
     private void createSocket(SocketRoomDTO room) {
-        messagingTemplate.convertAndSend("/topic/room/" + room.getId(), room);
+        messagingTemplate.convertAndSend("/room/" + room.getId(), room);
     }
 }

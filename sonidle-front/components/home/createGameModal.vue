@@ -2,11 +2,10 @@
 import { computed } from "vue";
 
 const props = defineProps({
-  modelValue: Boolean
+  modelValue: Boolean,
+  onCreateGame: Function,
 });
 const emit = defineEmits(["update:modelValue"]);
-
-const router = useRouter();
 
 const isOpen = computed({
   get: () => props.modelValue,
@@ -15,6 +14,11 @@ const isOpen = computed({
 
 const nbPlayers = ref(2)
 const roundDuration = ref(30)
+
+function submit() {
+  props.onCreateGame(nbPlayers.value, roundDuration.value);
+  isOpen.value = false;
+}
 </script>
 
 <template>
@@ -36,7 +40,7 @@ const roundDuration = ref(30)
     </template>
     <template #footer>
       <div class="w-full flex justify-end">
-        <UButton size="lg" :label="$t('confirm')" @click="router.push('/app/rooms/1')" />
+        <UButton size="lg" :label="$t('confirm')" @click="submit" />
       </div>
     </template>
   </UModal>
