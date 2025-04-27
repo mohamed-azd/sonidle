@@ -9,5 +9,6 @@
     "confirm": "Confirmer",
     "join": "Rejoindre",
     "paste_game_code": "Colle le code la partie ici !",
-    "code": "Code"
+    "code": "Code",
+    "copy_code": "Copier le code"
 }

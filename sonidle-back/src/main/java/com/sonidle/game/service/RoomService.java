@@ -5,6 +5,7 @@ import com.sonidle.game.model.Player;
 import com.sonidle.game.model.Room;
 import com.sonidle.game.model.RoomSettings;
 import com.sonidle.game.payload.CreateRoomPayload;
+import com.sonidle.game.payload.JoinRoomPayload;
 import com.sonidle.game.repository.PlayerRepository;
 import com.sonidle.game.repository.RoomRepository;
 import com.sonidle.game.repository.RoomSettingsRepository;
@@ -58,6 +59,19 @@ public class RoomService {
         createSocket(socketRoomDTO);
 
         return socketRoomDTO;
+    }
+
+    public SocketRoomDTO join(JoinRoomPayload payload) throws NotFoundException {
+        Room room = getRoom(payload.getRoomId());
+
+        if (room.getSettings().getNbPlayersMax() > room.getPlayersIds().size()) {
+            Player player = new Player();
+            player.setId(UUIDService.generate(playerRepository));
+            player.setName(payload.getPlayerName());
+            player.setOwner(false);
+            room.getPlayersIds().add(player.getId());
+            roomRepository.save(room);
+        }
     }
 
     private void createSocket(SocketRoomDTO room) {

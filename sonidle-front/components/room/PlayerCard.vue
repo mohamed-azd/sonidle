@@ -4,6 +4,10 @@ defineProps({
   name: {
     type: String,
     required: true
+  },
+  owner: {
+    type: Boolean,
+    required: false
   }
 })
 
@@ -11,11 +15,11 @@ defineProps({
 
 <template>
   <UCard>
-      <NuxtImg id="playerAvatar" src="avatar.svg" class="rounded-t-lg" />
+    <NuxtImg id="playerAvatar" src="avatar.svg" class="rounded-t-lg"/>
     <template #footer>
-      <div class="text-center text-wrap">
-<!--        <UIcon name="mdi:crown" />-->
-        <p class="text-sm truncated-text">{{name}}</p>
+      <div class="text-center text-wrap flex justify-center gap-2">
+        <UIcon name="mdi:crown" class="text-yellow-400" v-if="owner"/>
+        <p class="text-sm truncated-text">{{ name }}</p>
       </div>
     </template>
   </UCard>

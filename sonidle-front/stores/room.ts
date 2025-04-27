@@ -13,5 +13,5 @@ const defaultRoom: Room = {
 export const useRoomStore = defineStore("room", () => {
     const room = ref(defaultRoom);
 
-    return { room }
-});
+    return {room}
+}, {persist: true});

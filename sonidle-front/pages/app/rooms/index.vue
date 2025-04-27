@@ -2,33 +2,38 @@
 
 import PlayerCard from "~/components/room/PlayerCard.vue";
 import {useRoomSocket} from "~/composables/useRoomSocket";
-import type {Room} from "~/types/models";
 import {useRoomStore} from "~/stores/room";
 
-const { $pinia } = useNuxtApp();
+const isRoomCodeCopied = ref(false)
+
+function copyRoomCode() {
+  navigator.clipboard.writeText(useRoomStore().room.id)
+  isRoomCodeCopied.value = true
+
+  setTimeout(() => {
+    isRoomCodeCopied.value = false
+  }, 2000)
+}
 
 onMounted(() => {
   useRoomSocket(useRoomStore().room.id, (updatedRoom) => {
     console.log(updatedRoom);
   })
-
-  console.log(useRoomStore().room.id);
 })
 </script>
 
 <template>
+  <UButton
+      :label="$t('copy_code')"
+      :color="isRoomCodeCopied ? 'success' : 'neutral'"
+      variant="link"
+      size="lg"
+      :icon="isRoomCodeCopied ? 'i-lucide-copy-check' : 'i-lucide-copy'"
+      @click="copyRoomCode"
+  />
   <div id="players" class="mt-5">
-    <div class="player">
-      <PlayerCard name="Pseudo 1"></PlayerCard>
-    </div>
-    <div class="player">
-      <PlayerCard name="Pseudo 1"></PlayerCard>
-    </div>
-    <div class="player">
-      <PlayerCard name="Pseudo 1"></PlayerCard>
-    </div>
-    <div class="player">
-      <PlayerCard name="Pseudo 1"></PlayerCard>
+    <div class="player" v-for="player in useRoomStore().room.players">
+      <PlayerCard :name="player.name" :owner="player.owner"></PlayerCard>
     </div>
   </div>
 </template>
