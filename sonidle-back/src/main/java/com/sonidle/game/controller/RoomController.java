@@ -4,9 +4,12 @@ import com.sonidle.game.dto.SocketRoomDTO;
 import com.sonidle.game.model.Room;
 import com.sonidle.game.payload.CreateRoomPayload;
 import com.sonidle.game.payload.JoinRoomPayload;
+import com.sonidle.game.payload.UpdateGenresPayload;
 import com.sonidle.game.service.RoomService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.crossstore.ChangeSetPersister.*;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;

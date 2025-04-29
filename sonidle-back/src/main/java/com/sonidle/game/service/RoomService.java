@@ -6,6 +6,7 @@ import com.sonidle.game.model.Room;
 import com.sonidle.game.model.RoomSettings;
 import com.sonidle.game.payload.CreateRoomPayload;
 import com.sonidle.game.payload.JoinRoomPayload;
+import com.sonidle.game.payload.UpdateGenresPayload;
 import com.sonidle.game.repository.PlayerRepository;
 import com.sonidle.game.repository.RoomRepository;
 import com.sonidle.game.repository.RoomSettingsRepository;
@@ -61,7 +62,7 @@ public class RoomService {
 
         SocketRoomDTO socketRoomDTO = SocketRoomDTO.toDTO(room, List.of(owner), List.of());
 
-        createSocket(socketRoomDTO);
+        publishRoomSocket(socketRoomDTO);
 
         return socketRoomDTO;
     }
@@ -80,16 +81,28 @@ public class RoomService {
             room.getPlayersIds().add(player.getId());
             roomRepository.save(room);
 
-            Iterable<Player> playersList = playerRepository.findAllById(room.getPlayersIds());
-            List<Player> players = StreamSupport.stream(playersList.spliterator(), false).collect(Collectors.toList());
-
-            SocketRoomDTO roomDTO = SocketRoomDTO.toDTO(room, players, List.of());
-            createSocket(roomDTO);
+            SocketRoomDTO roomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), List.of());
+            publishRoomSocket(roomDTO);
 
             return roomDTO;
     }
 
-    private void createSocket(SocketRoomDTO room) {
+    public void updateGenres(UpdateGenresPayload payload) throws NotFoundException {
+        Room room = getRoom(payload.getRoomId());
+        RoomSettings settings = room.getSettings();
+        settings.setGenres(payload.getGenres());
+        roomRepository.save(room);
+
+        SocketRoomDTO roomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), List.of());
+        publishRoomSocket(roomDTO);
+    }
+
+    private void publishRoomSocket(SocketRoomDTO room) {
         messagingTemplate.convertAndSend("/room/" + room.getId(), room);
+    }
+
+    private List<Player> getPlayersByIds(List<UUID> playersIds) {
+        Iterable<Player> playersList = playerRepository.findAllById(playersIds);
+        return StreamSupport.stream(playersList.spliterator(), false).collect(Collectors.toList());
     }
 }

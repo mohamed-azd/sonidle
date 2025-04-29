@@ -8,6 +8,7 @@ export interface RoomSettings {
     id: string;
     nbPlayerMax: number;
     gameDuration: number;
+    genres: MusicGenre[];
 }
 
 export interface Player {
@@ -15,4 +16,9 @@ export interface Player {
     name: string;
     score: number;
     owner: boolean;
+}
+
+export interface MusicGenre {
+    id: id;
+    name: string;
 }

@@ -27,6 +27,7 @@ import type {CreateRoomPayload} from "~/types/payloads/createRoomPayload.js";
 import roomService from "~/services/roomService";
 import type {Room} from "~/types/models";
 import {useRoomStore} from "~/stores/room";
+import {usePlayerStore} from "~/stores/player";
 
 const route = useRoute();
 const {setLocale} = useI18n();
@@ -58,6 +59,7 @@ async function createGame(nbPlayersMax: number, roundDuration: number) {
   }).then((data) => {
     const room = data.data.value as Room;
     useRoomStore().room = room;
+    usePlayerStore().player = room.players.find(player => player.name === playerName.value);
     router.push(`/app/rooms`);
   });
 }
@@ -69,6 +71,7 @@ function joinGame(roomId: string) {
   }).then((data) => {
     const room = data.data.value as Room;
     useRoomStore().room = room;
+    usePlayerStore().player = room.players.find(player => player.name === playerName.value);
     router.push(`/app/rooms`);
   })
 }

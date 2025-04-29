@@ -10,5 +10,9 @@
     "join": "Rejoindre",
     "paste_game_code": "Colle le code la partie ici !",
     "code": "Code",
-    "copy_code": "Copier le code"
+    "copy_code": "Copier le code",
+    "room_title": "Salon de {ownerName}",
+    "choose_genres": "Choisissez des genres",
+    "launch_game": "Lancer la partie",
+    "players": "Joueurs"
 }

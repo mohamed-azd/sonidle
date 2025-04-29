@@ -10,5 +10,9 @@
     "join": "Join",
     "paste_game_code": "Paste the game code here !",
     "code": "Code",
-    "copy_code": "Copy code"
+    "copy_code": "Copy code",
+    "room_title": "{ownerName}'s room",
+    "choose_genres": "Choose genres",
+    "launch_game": "Start the game",
+    "players": "Players"
 }

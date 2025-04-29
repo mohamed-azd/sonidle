@@ -1,19 +1,25 @@
 package com.sonidle.game.model;
 
-import org.springframework.data.redis.core.RedisHash;
-
 import java.io.Serializable;
 
-public enum MusicGenre implements Serializable {
-    ROCK,
-    RAP,
-    JAZZ,
-    CLASSICAL,
-    POP,
-    ELECTRONIC,
-    REGGAE,
-    BLUES,
-    METAL,
-    COUNTRY
+public class MusicGenre implements Serializable {
+    private int id;
+    private String name;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
 
