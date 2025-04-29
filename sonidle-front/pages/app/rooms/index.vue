@@ -3,6 +3,7 @@
 import PlayerCard from "~/components/room/PlayerCard.vue";
 import {useRoomSocket} from "~/composables/useRoomSocket";
 import {useRoomStore} from "~/stores/room";
+import { Client } from '@stomp/stompjs';
 
 const isRoomCodeCopied = ref(false)
 
@@ -15,11 +16,17 @@ function copyRoomCode() {
   }, 2000)
 }
 
+let client : Client | undefined;
+
 onMounted(() => {
-  useRoomSocket(useRoomStore().room.id, (updatedRoom) => {
-    console.log(updatedRoom);
+  client = useRoomSocket(useRoomStore().room.id, (updatedRoom) => {
+    useRoomStore().room = updatedRoom;
   })
 })
+
+onUnmounted(() => {
+  client?.deactivate();
+});
 </script>
 
 <template>

@@ -9,12 +9,17 @@ import com.sonidle.game.payload.JoinRoomPayload;
 import com.sonidle.game.repository.PlayerRepository;
 import com.sonidle.game.repository.RoomRepository;
 import com.sonidle.game.repository.RoomSettingsRepository;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class RoomService {
@@ -61,17 +66,27 @@ public class RoomService {
         return socketRoomDTO;
     }
 
-    public SocketRoomDTO join(JoinRoomPayload payload) throws NotFoundException {
+    public SocketRoomDTO join(JoinRoomPayload payload) throws NotFoundException, BadRequestException {
         Room room = getRoom(payload.getRoomId());
 
-        if (room.getSettings().getNbPlayersMax() > room.getPlayersIds().size()) {
+        if (room.getSettings().getNbPlayersMax() <= room.getPlayersIds().size()) {
+            throw new BadRequestException("The room is full");
+        }
             Player player = new Player();
             player.setId(UUIDService.generate(playerRepository));
             player.setName(payload.getPlayerName());
             player.setOwner(false);
+            playerRepository.save(player);
             room.getPlayersIds().add(player.getId());
             roomRepository.save(room);
-        }
+
+            Iterable<Player> playersList = playerRepository.findAllById(room.getPlayersIds());
+            List<Player> players = StreamSupport.stream(playersList.spliterator(), false).collect(Collectors.toList());
+
+            SocketRoomDTO roomDTO = SocketRoomDTO.toDTO(room, players, List.of());
+            createSocket(roomDTO);
+
+            return roomDTO;
     }
 
     private void createSocket(SocketRoomDTO room) {

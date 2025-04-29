@@ -45,7 +45,9 @@ function openCreateGameModal() {
 }
 
 function openJoinGameModal() {
-  joinGameModal.open();
+  joinGameModal.open({
+    onJoinGame: joinGame
+  });
 }
 
 async function createGame(nbPlayersMax: number, roundDuration: number) {
@@ -58,6 +60,17 @@ async function createGame(nbPlayersMax: number, roundDuration: number) {
     useRoomStore().room = room;
     router.push(`/app/rooms`);
   });
+}
+
+function joinGame(roomId: string) {
+  roomService.join({
+    playerName: playerName.value,
+    roomId: roomId
+  }).then((data) => {
+    const room = data.data.value as Room;
+    useRoomStore().room = room;
+    router.push(`/app/rooms`);
+  })
 }
 </script>
 

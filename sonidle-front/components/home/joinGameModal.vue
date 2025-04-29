@@ -2,7 +2,8 @@
 import {computed} from "vue";
 
 const props = defineProps({
-  modelValue: Boolean
+  modelValue: Boolean,
+  onJoinGame: Function
 });
 const emit = defineEmits(["update:modelValue"]);
 
@@ -12,6 +13,11 @@ const isOpen = computed({
 });
 
 const roomId = ref("")
+
+function submit() {
+  props.onJoinGame(roomId.value);
+  isOpen.value = false;
+}
 </script>
 
 <template>
@@ -27,7 +33,7 @@ const roomId = ref("")
     </template>
     <template #footer>
       <div class="w-full flex justify-end">
-        <UButton @click="isOpen = false" size="lg" :label="$t('join')"></UButton>
+        <UButton @click="submit" size="lg" :label="$t('join')"></UButton>
       </div>
     </template>
   </UModal>

@@ -9,5 +9,9 @@ export default {
 
     async create(payload : CreateRoomPayload) {
         return await useApi<Room>("/rooms", { method: "POST", body: payload });
+    },
+
+    async join(payload: JoinGamePaylaod) {
+        return await useApi<Room>("/rooms/join", { method: "POST", body: payload });
     }
 }

@@ -25,8 +25,7 @@ export const useRoomSocket = (roomId: string, onMessage: (room: Room) => void): 
         },
     });
 
-    onMounted(() => client.activate());
-    onUnmounted(() => client.deactivate());
+    client.activate()
 
     return client;
 };
