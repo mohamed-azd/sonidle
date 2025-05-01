@@ -43,10 +43,6 @@ public class RoomService {
         this.musicPlatformService = musicPlatformService;
     }
 
-    public Room getRoom(UUID id) throws NotFoundException {
-        return roomRepository.findById(id).orElseThrow(NotFoundException::new);
-    }
-
     public SocketRoomDTO create(CreateRoomPayload payload) {
         Room room = new Room();
         room.setId(UUIDService.generate(roomRepository));
@@ -116,6 +112,11 @@ public class RoomService {
         publishRoomSocket(SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), musics));
     }
 
+    public void getRoomInSocket(UUID roomId) throws NotFoundException {
+        Room room = getRoom(roomId);
+        publishRoomSocket(SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), getMusicsByIds(room.getMusicsIds())));
+    }
+
     private void publishRoomSocket(SocketRoomDTO room) {
         messagingTemplate.convertAndSend("/room/" + room.getId(), room);
     }
@@ -123,5 +124,14 @@ public class RoomService {
     private List<Player> getPlayersByIds(List<UUID> playersIds) {
         Iterable<Player> playersList = playerRepository.findAllById(playersIds);
         return StreamSupport.stream(playersList.spliterator(), false).collect(Collectors.toList());
+    }
+
+    private List<Music> getMusicsByIds(List<UUID> musicsIds) {
+        Iterable<Music> musicsList = musicRepository.findAllById(musicsIds);
+        return StreamSupport.stream(musicsList.spliterator(), false).collect(Collectors.toList());
+    }
+
+    private Room getRoom(UUID id) throws NotFoundException {
+        return roomRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 }

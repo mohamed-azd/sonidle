@@ -6,14 +6,17 @@ import {useRoomStore} from "~/stores/room";
 import {Client} from '@stomp/stompjs';
 import deezerService from "~/services/musicService";
 import type {MusicGenre} from "~/types/models";
+import roomService from "~/services/roomService";
 
 type MusicGenreCheckBox = MusicGenre & {
   isSelected: boolean;
 }
 
+const router = useRouter();
 let client: Client | undefined;
 const isRoomCodeCopied = ref(false)
 const genres = ref<MusicGenreCheckBox[]>([]);
+const isStartingGame = ref(false);
 
 function copyRoomCode() {
   navigator.clipboard.writeText(useRoomStore().room.id)
@@ -25,24 +28,28 @@ function copyRoomCode() {
 }
 
 onMounted(() => {
-  deezerService.getGenres().then((data) => {
-    const musicGenres = data.data.value as MusicGenre[];
-    genres.value = musicGenres.map((genre) => {
-      return {
-        id: genre.id,
-        name: genre.name,
-        isSelected: false
-      }
-    });
+  if (useRoomStore().room.isPlaying) {
+    router.push(`/app/rooms/game`);
+  } else {
+    deezerService.getGenres().then((data) => {
+      const musicGenres = data.data.value as MusicGenre[];
+      genres.value = musicGenres.map((genre) => {
+        return {
+          id: genre.id,
+          name: genre.name,
+          isSelected: false
+        }
+      });
 
-    client = useRoomSocket(useRoomStore().room.id, (updatedRoom) => {
-      useRoomStore().room = updatedRoom;
-      const selectedGenresIds = updatedRoom.settings.genres.map(selectedGenre => selectedGenre.id);
-      genres.value.forEach((genre) => {
-        genre.isSelected = selectedGenresIds.includes(genre.id);
+      client = useRoomSocket(useRoomStore().room.id, (updatedRoom) => {
+        useRoomStore().room = updatedRoom;
+        const selectedGenresIds = updatedRoom.settings.genres.map(selectedGenre => selectedGenre.id);
+        genres.value.forEach((genre) => {
+          genre.isSelected = selectedGenresIds.includes(genre.id);
+        })
       })
     })
-  })
+  }
 })
 
 onUnmounted(() => {
@@ -68,6 +75,14 @@ function updateSelectedGenres() {
     body: JSON.stringify(payload)
   });
 }
+
+function start() {
+  isStartingGame.value = true;
+  roomService.start(useRoomStore().room.id).then(() => {
+    router.push("/app/rooms/game");
+    isStartingGame.value = false;
+  })
+}
 </script>
 
 <template>
@@ -79,11 +94,11 @@ function updateSelectedGenres() {
       :icon="isRoomCodeCopied ? 'i-lucide-copy-check' : 'i-lucide-copy'"
       @click="copyRoomCode"
   />
-  <h1 class="text-xl text-center font-medium">
+  <h1 class="text-2xl text-center font-medium">
     {{ $t('room_title', {ownerName: useRoomStore().room.players.find(player => player.owner)?.name}) }}
   </h1>
 
-  <div class="w-full flex justify-between mt-8 h-[66vh]">
+  <div class="w-full flex justify-between mt-10 h-[66vh]">
     <div class="flex flex-col w-1/2 items-center py-8 gap-6">
       <p class="text-lg font-semibold">{{ $t("choose_genres") }}</p>
       <div class="flex flex-wrap gap-4 w-full max-w-xl">
@@ -99,7 +114,7 @@ function updateSelectedGenres() {
       </div>
     </div>
 
-    <USeparator orientation="vertical"/>
+    <USeparator orientation="vertical" class="h-[80%]"/>
 
     <div class="flex flex-col w-1/2 items-center py-8 gap-6">
       <p class="text-lg font-semibold">{{ $t('players') }}</p>
@@ -111,8 +126,8 @@ function updateSelectedGenres() {
     </div>
   </div>
 
-  <div class="w-full flex justify-center mt-8">
-    <UButton :label="$t('launch_game')" size="xl"/>
+  <div class="w-full flex justify-center">
+    <UButton :label="$t('launch_game')" size="xl" trailing-icon="i-lucide:music-4" @click="start" :loading="isStartingGame"/>
   </div>
 </template>
 

@@ -2,6 +2,7 @@ export interface Room {
     id: string;
     settings: RoomSettings;
     players: Player[];
+    isPlaying: boolean;
 }
 
 export interface RoomSettings {
@@ -19,6 +20,15 @@ export interface Player {
 }
 
 export interface MusicGenre {
-    id: id;
+    id: number;
     name: string;
+}
+
+export interface Music {
+    id: string;
+    title: string;
+    titleShort: string;
+    preview: string;
+    artist: string;
+    played: boolean
 }

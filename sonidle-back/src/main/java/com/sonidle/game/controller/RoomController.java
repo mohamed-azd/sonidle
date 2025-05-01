@@ -23,11 +23,6 @@ public class RoomController {
         this.roomService = roomService;
     }
 
-    @GetMapping(value = "/{id}")
-    public Room getRoom(@PathVariable UUID id) throws NotFoundException {
-        return roomService.getRoom(id);
-    }
-
     @PostMapping
     public SocketRoomDTO createRoom(@RequestBody CreateRoomPayload payload) {
         return roomService.create(payload);

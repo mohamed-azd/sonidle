@@ -25,7 +25,7 @@ import CreateGameModal from "~/components/home/createGameModal.vue";
 import JoinGameModal from "~/components/home/joinGameModal.vue";
 import type {CreateRoomPayload} from "~/types/payloads/createRoomPayload.js";
 import roomService from "~/services/roomService";
-import type {Room} from "~/types/models";
+import type {Player, Room} from "~/types/models";
 import {useRoomStore} from "~/stores/room";
 import {usePlayerStore} from "~/stores/player";
 
@@ -59,7 +59,7 @@ async function createGame(nbPlayersMax: number, roundDuration: number) {
   }).then((data) => {
     const room = data.data.value as Room;
     useRoomStore().room = room;
-    usePlayerStore().player = room.players.find(player => player.name === playerName.value);
+    usePlayerStore().player = room.players.find(player => player.name === playerName.value) as Player;
     router.push(`/app/rooms`);
   });
 }
