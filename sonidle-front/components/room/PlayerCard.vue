@@ -15,10 +15,10 @@ defineProps({
 
 <template>
   <UCard>
-    <NuxtImg id="playerAvatar" src="avatar.svg" class="rounded-t-lg"/>
+    <NuxtImg id="playerAvatar" src="ez.png" class="rounded-t-lg"/>
     <template #footer>
-      <div class="text-center text-wrap flex justify-center gap-2">
-        <UIcon name="mdi:crown" class="text-yellow-400" v-if="owner"/>
+      <div class="flex justify-center items-center gap-2 px-2">
+        <UIcon name="mdi:crown" class="text-yellow-400 text-md" v-if="owner"/>
         <p class="text-sm truncated-text">{{ name }}</p>
       </div>
     </template>

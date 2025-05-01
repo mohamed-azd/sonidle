@@ -103,8 +103,8 @@ function updateSelectedGenres() {
 
     <div class="flex flex-col w-1/2 items-center py-8 gap-6">
       <p class="text-lg font-semibold">{{ $t('players') }}</p>
-      <div id="players">
-        <div class="player" v-for="player in useRoomStore().room.players">
+      <div id="players" class="flex flex-wrap gap-6 w-full max-w-xl justify-center">
+        <div class="max-w-[5vw]" v-for="player in useRoomStore().room.players">
           <PlayerCard :key="player.id" :name="player.name" :owner="player.owner"></PlayerCard>
         </div>
       </div>
@@ -117,10 +117,6 @@ function updateSelectedGenres() {
 </template>
 
 <style scoped>
-
-#players {
-  @apply w-[40vw] mx-auto grid grid-cols-4 place-items-center;
-}
 
 .player {
   @apply max-w-[7vw];
