@@ -26,7 +26,7 @@ function copyRoomCode() {
 
 onMounted(() => {
   deezerService.getGenres().then((data) => {
-    const musicGenres: MusicGenre[] = data.data.value;
+    const musicGenres = data.data.value as MusicGenre[];
     genres.value = musicGenres.map((genre) => {
       return {
         id: genre.id,
@@ -37,12 +37,10 @@ onMounted(() => {
 
     client = useRoomSocket(useRoomStore().room.id, (updatedRoom) => {
       useRoomStore().room = updatedRoom;
-      const currentMusicGenres = genres.value;
-      for (const selectedGenre of updatedRoom.settings.genres) {
-        currentMusicGenres.filter(genre )
-      }
-
-      console.log(selectedGenreIds.value)
+      const selectedGenresIds = updatedRoom.settings.genres.map(selectedGenre => selectedGenre.id);
+      genres.value.forEach((genre) => {
+        genre.isSelected = selectedGenresIds.includes(genre.id);
+      })
     })
   })
 })
@@ -51,16 +49,14 @@ onUnmounted(() => {
   client?.deactivate();
 });
 
-watch(selectedGenreIds, (newValue) => {
-  console.log('salut')
+watch(genres, (newValue) => {
   if (usePlayerStore().player.owner) {
-    updateSelectedGenres(newValue);
+    updateSelectedGenres();
   }
-});
+}, { deep: true });
 
 function updateSelectedGenres() {
-  console.log('caca')
-  if (!client) return;
+  if (!client || !client.connected) return;
 
   const payload = {
     roomId: useRoomStore().room.id,
@@ -68,7 +64,7 @@ function updateSelectedGenres() {
   }
 
   client.publish({
-    destination: `/app/room/${useRoomStore().room.id}/genres`,
+    destination: `/app/room/genres`,
     body: JSON.stringify(payload)
   });
 }
@@ -84,7 +80,7 @@ function updateSelectedGenres() {
       @click="copyRoomCode"
   />
   <h1 class="text-xl text-center font-medium">
-    {{ $t('room_title', {ownerName: useRoomStore().room.players.find(player => player.owner).name}) }}
+    {{ $t('room_title', {ownerName: useRoomStore().room.players.find(player => player.owner)?.name}) }}
   </h1>
 
   <div class="w-full flex justify-between mt-8 h-[66vh]">

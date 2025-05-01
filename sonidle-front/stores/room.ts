@@ -6,7 +6,8 @@ const defaultRoom: Room = {
     settings: {
         id: "",
         gameDuration: 0,
-        nbPlayerMax: 0
+        nbPlayerMax: 0,
+        genres: []
     }
 }
 

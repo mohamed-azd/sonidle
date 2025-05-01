@@ -15,7 +15,7 @@ public class WebSocketController {
         this.roomService = roomService;
     }
 
-    @MessageMapping("/app/room/{id}/genres")
+    @MessageMapping(value = "/room/genres")
     public void updateGenres(UpdateGenresPayload payload) throws NotFoundException {
         roomService.updateGenres(payload);
     }
