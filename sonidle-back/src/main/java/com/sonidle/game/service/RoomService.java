@@ -1,15 +1,18 @@
 package com.sonidle.game.service;
 
 import com.sonidle.game.dto.SocketRoomDTO;
+import com.sonidle.game.model.Music;
 import com.sonidle.game.model.Player;
 import com.sonidle.game.model.Room;
 import com.sonidle.game.model.RoomSettings;
 import com.sonidle.game.payload.CreateRoomPayload;
 import com.sonidle.game.payload.JoinRoomPayload;
 import com.sonidle.game.payload.UpdateGenresPayload;
+import com.sonidle.game.repository.MusicRepository;
 import com.sonidle.game.repository.PlayerRepository;
 import com.sonidle.game.repository.RoomRepository;
 import com.sonidle.game.repository.RoomSettingsRepository;
+import com.sonidle.game.service.interfaces.MusicPlatformService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -27,13 +30,17 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final RoomSettingsRepository roomSettingsRepository;
     private final PlayerRepository playerRepository;
+    private final MusicPlatformService musicPlatformService;
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private MusicRepository musicRepository;
 
-    public RoomService(RoomRepository roomRepository, RoomSettingsRepository roomSettingsRepository, PlayerRepository playerRepository) {
+    public RoomService(RoomRepository roomRepository, RoomSettingsRepository roomSettingsRepository, PlayerRepository playerRepository, MusicPlatformService musicPlatformService) {
         this.roomRepository = roomRepository;
         this.roomSettingsRepository = roomSettingsRepository;
         this.playerRepository = playerRepository;
+        this.musicPlatformService = musicPlatformService;
     }
 
     public Room getRoom(UUID id) throws NotFoundException {
@@ -95,6 +102,18 @@ public class RoomService {
 
         SocketRoomDTO roomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), List.of());
         publishRoomSocket(roomDTO);
+    }
+
+    public void start(UUID roomId) throws Exception {
+        Room room = getRoom(roomId);
+        List<Music> musics = musicPlatformService.getRandomMusics(room.getSettings().getGenres());
+        musics.forEach(music -> music.setId(UUIDService.generate(musicRepository)));
+        musicRepository.saveAll(musics);
+        room.setPlaying(true);
+        room.setMusicsIds(musics.stream().map(Music::getId).collect(Collectors.toList()));
+        roomRepository.save(room);
+
+        publishRoomSocket(SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), musics));
     }
 
     private void publishRoomSocket(SocketRoomDTO room) {

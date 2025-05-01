@@ -10,5 +10,5 @@ import java.util.List;
 public interface MusicPlatformService {
     List<MusicGenre> getMusicGenres();
 
-    List<Music> getRandomMusics(List<MusicGenre> genres);
+    List<Music> getRandomMusics(List<MusicGenre> genres) throws Exception;
 }

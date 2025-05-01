@@ -10,9 +10,57 @@ import java.util.UUID;
 public class Music implements Serializable {
     @Id
     private UUID id;
-    private String url;
     private String title;
+    private String titleShort;
     private String artist;
-    private String album;
-    private MusicGenre genre;
+    private String preview;
+    private boolean isPlayed;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getTitleShort() {
+        return titleShort;
+    }
+
+    public void setTitleShort(String titleShort) {
+        this.titleShort = titleShort;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    public String getPreview() {
+        return preview;
+    }
+
+    public void setPreview(String preview) {
+        this.preview = preview;
+    }
+
+    public boolean isPlayed() {
+        return isPlayed;
+    }
+
+    public void setPlayed(boolean played) {
+        isPlayed = played;
+    }
 }

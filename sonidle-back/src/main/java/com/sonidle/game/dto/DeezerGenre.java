@@ -4,7 +4,7 @@ import com.sonidle.game.model.MusicGenre;
 
 import java.util.List;
 
-public class DeezerGenreResponseDTO {
+public class DeezerGenre {
     private List<MusicGenre> data;
 
     public List<MusicGenre> getData() {

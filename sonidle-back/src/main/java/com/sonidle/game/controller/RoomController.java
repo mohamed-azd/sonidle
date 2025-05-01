@@ -37,4 +37,9 @@ public class RoomController {
     public SocketRoomDTO joinRoom(@RequestBody JoinRoomPayload payload) throws NotFoundException, BadRequestException {
         return roomService.join(payload);
     }
+
+    @PostMapping("/{id}/start")
+    public void start(@PathVariable UUID id) throws Exception {
+        roomService.start(id);
+    }
 }
