@@ -18,5 +18,6 @@
     "waiting_host": "En attente de l'hôte...",
     "starting_game": "Lancement de la partie...",
     "validate": "Valider",
-    "guess_placeholder": "Entrez votre réponse ici..."
+    "guess_placeholder": "Entrez votre réponse ici...",
+    "player_score": "{score} pts"
 }

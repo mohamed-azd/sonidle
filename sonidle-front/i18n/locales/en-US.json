@@ -18,5 +18,6 @@
     "waiting_host": "Waiting for the host...",
     "starting_game": "Starting the game...",
     "validate": "Submit",
-    "guess_placeholder": "Enter your answer here..."
+    "guess_placeholder": "Enter your answer here...",
+    "player_score": "{score} pts"
 }

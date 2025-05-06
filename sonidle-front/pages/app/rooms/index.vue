@@ -145,7 +145,6 @@ function start() {
 </template>
 
 <style scoped>
-
 .player {
   @apply max-w-[7vw];
 }

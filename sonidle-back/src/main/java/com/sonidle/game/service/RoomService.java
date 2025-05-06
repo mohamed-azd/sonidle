@@ -21,6 +21,10 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.text.Normalizer;
+import java.util.Locale;
+import java.util.regex.Pattern;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -78,18 +82,18 @@ public class RoomService {
         if (room.getSettings().getNbPlayersMax() <= room.getPlayersIds().size()) {
             throw new BadRequestException("The room is full");
         }
-            Player player = new Player();
-            player.setId(UUIDService.generate(playerRepository));
-            player.setName(payload.getPlayerName());
-            player.setOwner(false);
-            playerRepository.save(player);
-            room.getPlayersIds().add(player.getId());
-            roomRepository.save(room);
+        Player player = new Player();
+        player.setId(UUIDService.generate(playerRepository));
+        player.setName(payload.getPlayerName());
+        player.setOwner(false);
+        playerRepository.save(player);
+        room.getPlayersIds().add(player.getId());
+        roomRepository.save(room);
 
-            SocketRoomDTO roomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), List.of());
-            publishRoomSocket(roomDTO);
+        SocketRoomDTO roomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), List.of());
+        publishRoomSocket(roomDTO);
 
-            return roomDTO;
+        return roomDTO;
     }
 
     public void updateGenres(UpdateGenresPayload payload) throws NotFoundException {
@@ -124,10 +128,14 @@ public class RoomService {
         Music musicToGuess = musicRepository.findById(payload.getMusicId()).orElseThrow(NotFoundException::new);
         int score = 0;
 
-        if (payload.getAnswer().contains(musicToGuess.getTitleShort().toLowerCase())) {
-            score += 1;
+        String answer = normalize(payload.getAnswer());
+        String title = normalize(musicToGuess.getTitleShort());
+        String artist = normalize(musicToGuess.getArtist());
 
-            if (payload.getAnswer().contains(musicToGuess.getArtist().toLowerCase())) {
+        if (answer.contains(title)) {
+            score += 2;
+
+            if (answer.contains(artist)) {
                 score += 1;
             }
 
@@ -164,4 +172,13 @@ public class RoomService {
     private Room getRoom(UUID id) throws NotFoundException {
         return roomRepository.findById(id).orElseThrow(NotFoundException::new);
     }
+
+
+    public static String normalize(String input) {
+        if (input == null) return null;
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(normalized).replaceAll("").toLowerCase(Locale.ROOT);
+    }
+
 }

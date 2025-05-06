@@ -1,9 +1,12 @@
 <script setup lang="ts">
 const props = defineProps({
   duration: Number,
+  resetTrigger: Number,
 })
 
-defineEmits({})
+const emit = defineEmits<{
+  (e: 'finished'): void;
+}>();
 
 const timer = ref(props.duration)
 let interval;
@@ -16,14 +19,25 @@ const strokeOffset = computed(() => {
   return circumference * (1 - percent)
 })
 
-onMounted(() => {
+
+watch(() => props.resetTrigger, (newValue) => {
+  if (newValue > 0) {
+    startTimer();
+  }
+}, { immediate: true });
+
+function startTimer() {
+  clearInterval(interval)
+  timer.value = props.duration
   interval = setInterval(() => {
     if (timer.value > 0) {
       timer.value -= 1
     } else {
+      clearInterval(interval)
+      emit('finished')
     }
   }, 1000)
-})
+}
 
 onUnmounted(() => {
   clearInterval(interval)
