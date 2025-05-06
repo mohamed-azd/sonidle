@@ -8,6 +8,10 @@ defineProps({
   owner: {
     type: Boolean,
     required: false
+  },
+  isCurrentPlayer: {
+    type: Boolean,
+    required: true
   }
 })
 
@@ -19,7 +23,7 @@ defineProps({
     <template #footer>
       <div class="flex justify-center items-center gap-2 px-2">
         <UIcon name="mdi:crown" class="text-yellow-400 text-md" v-if="owner"/>
-        <p class="text-sm truncated-text">{{ name }}</p>
+        <p :class="isCurrentPlayer ? 'text-sm truncated-text text-primary font-semibold' : 'text-sm truncated-text'">{{ name }}</p>
       </div>
     </template>
   </UCard>

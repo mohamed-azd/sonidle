@@ -14,5 +14,9 @@
     "room_title": "{ownerName}'s room",
     "choose_genres": "Choose genres",
     "launch_game": "Start the game",
-    "players": "Players"
+    "players": "Players",
+    "waiting_host": "Waiting for the host...",
+    "starting_game": "Starting the game...",
+    "validate": "Submit",
+    "guess_placeholder": "Enter your answer here..."
 }

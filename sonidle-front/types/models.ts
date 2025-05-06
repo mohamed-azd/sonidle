@@ -2,7 +2,7 @@ export interface Room {
     id: string;
     settings: RoomSettings;
     players: Player[];
-    isPlaying: boolean;
+    playing: boolean;
 }
 
 export interface RoomSettings {

@@ -14,5 +14,9 @@
     "room_title": "Salon de {ownerName}",
     "choose_genres": "Choisissez des genres",
     "launch_game": "Lancer la partie",
-    "players": "Joueurs"
+    "players": "Joueurs",
+    "waiting_host": "En attente de l'hôte...",
+    "starting_game": "Lancement de la partie...",
+    "validate": "Valider",
+    "guess_placeholder": "Entrez votre réponse ici..."
 }

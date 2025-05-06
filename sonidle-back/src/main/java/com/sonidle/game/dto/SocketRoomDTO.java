@@ -20,6 +20,7 @@ public class SocketRoomDTO {
         dto.settings = room.getSettings();
         dto.players = players;
         dto.playlist = musics;
+        dto.isPlaying = room.isPlaying();
 
         return dto;
     }

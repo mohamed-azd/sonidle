@@ -1,8 +1,10 @@
 package com.sonidle.game.controller;
 
+import com.sonidle.game.dto.GuessDTO;
 import com.sonidle.game.dto.SocketRoomDTO;
 import com.sonidle.game.model.Room;
 import com.sonidle.game.payload.CreateRoomPayload;
+import com.sonidle.game.payload.GuessPayload;
 import com.sonidle.game.payload.JoinRoomPayload;
 import com.sonidle.game.payload.UpdateGenresPayload;
 import com.sonidle.game.service.RoomService;
@@ -36,5 +38,10 @@ public class RoomController {
     @PostMapping("/{id}/start")
     public void start(@PathVariable UUID id) throws Exception {
         roomService.start(id);
+    }
+
+    @PostMapping("/{id}/guess")
+    public GuessDTO guess(@PathVariable UUID id, @RequestBody GuessPayload payload) throws Exception {
+        return roomService.guess(id, payload);
     }
 }

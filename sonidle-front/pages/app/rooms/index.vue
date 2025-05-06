@@ -13,10 +13,13 @@ type MusicGenreCheckBox = MusicGenre & {
 }
 
 const router = useRouter();
+
 let client: Client | undefined;
 const isRoomCodeCopied = ref(false)
 const genres = ref<MusicGenreCheckBox[]>([]);
 const isStartingGame = ref(false);
+const gameStatus = computed(() => isStartingGame ? 'starting_game' : 'waiting_host');
+const GAME_ROUTE = "/app/rooms/game"
 
 function copyRoomCode() {
   navigator.clipboard.writeText(useRoomStore().room.id)
@@ -28,8 +31,8 @@ function copyRoomCode() {
 }
 
 onMounted(() => {
-  if (useRoomStore().room.isPlaying) {
-    router.push(`/app/rooms/game`);
+  if (useRoomStore().room.playing) {
+    router.push(GAME_ROUTE);
   } else {
     deezerService.getGenres().then((data) => {
       const musicGenres = data.data.value as MusicGenre[];
@@ -42,11 +45,16 @@ onMounted(() => {
       });
 
       client = useRoomSocket(useRoomStore().room.id, (updatedRoom) => {
+        console.log(updatedRoom)
         useRoomStore().room = updatedRoom;
         const selectedGenresIds = updatedRoom.settings.genres.map(selectedGenre => selectedGenre.id);
         genres.value.forEach((genre) => {
           genre.isSelected = selectedGenresIds.includes(genre.id);
+
         })
+        if (useRoomStore().room.playing) {
+          router.push(GAME_ROUTE);
+        }
       })
     })
   }
@@ -79,7 +87,7 @@ function updateSelectedGenres() {
 function start() {
   isStartingGame.value = true;
   roomService.start(useRoomStore().room.id).then(() => {
-    router.push("/app/rooms/game");
+    router.push(GAME_ROUTE);
     isStartingGame.value = false;
   })
 }
@@ -120,14 +128,19 @@ function start() {
       <p class="text-lg font-semibold">{{ $t('players') }}</p>
       <div id="players" class="flex flex-wrap gap-6 w-full max-w-xl justify-center">
         <div class="max-w-[5vw]" v-for="player in useRoomStore().room.players">
-          <PlayerCard :key="player.id" :name="player.name" :owner="player.owner"></PlayerCard>
+          <PlayerCard
+              :key="player.id"
+              :name="player.name"
+              :owner="player.owner"
+              :isCurrentPlayer="player.id === usePlayerStore().player.id" />
         </div>
       </div>
     </div>
   </div>
 
   <div class="w-full flex justify-center">
-    <UButton :label="$t('launch_game')" size="xl" trailing-icon="i-lucide:music-4" @click="start" :loading="isStartingGame"/>
+    <UButton v-if="usePlayerStore().player.owner" :label="$t('launch_game')" size="xl" trailing-icon="i-lucide:music-4" @click="start" :loading="isStartingGame"/>
+    <p v-else class="text-center italic font-light text-lg">{{ $t(gameStatus) }}</p>
   </div>
 </template>
 

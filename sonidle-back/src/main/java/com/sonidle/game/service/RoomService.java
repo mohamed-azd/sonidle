@@ -1,11 +1,13 @@
 package com.sonidle.game.service;
 
+import com.sonidle.game.dto.GuessDTO;
 import com.sonidle.game.dto.SocketRoomDTO;
 import com.sonidle.game.model.Music;
 import com.sonidle.game.model.Player;
 import com.sonidle.game.model.Room;
 import com.sonidle.game.model.RoomSettings;
 import com.sonidle.game.payload.CreateRoomPayload;
+import com.sonidle.game.payload.GuessPayload;
 import com.sonidle.game.payload.JoinRoomPayload;
 import com.sonidle.game.payload.UpdateGenresPayload;
 import com.sonidle.game.repository.MusicRepository;
@@ -115,6 +117,34 @@ public class RoomService {
     public void getRoomInSocket(UUID roomId) throws NotFoundException {
         Room room = getRoom(roomId);
         publishRoomSocket(SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), getMusicsByIds(room.getMusicsIds())));
+    }
+
+    public GuessDTO guess(UUID roomId, GuessPayload payload) throws NotFoundException {
+        GuessDTO response = new GuessDTO();
+        Music musicToGuess = musicRepository.findById(payload.getMusicId()).orElseThrow(NotFoundException::new);
+        int score = 0;
+
+        if (payload.getAnswer().contains(musicToGuess.getTitleShort().toLowerCase())) {
+            score += 1;
+
+            if (payload.getAnswer().contains(musicToGuess.getArtist().toLowerCase())) {
+                score += 1;
+            }
+
+            Player player = playerRepository.findById(payload.getPlayerId()).orElseThrow(NotFoundException::new);
+            player.setScore(player.getScore() + score);
+            playerRepository.save(player);
+
+            Room room = getRoom(roomId);
+            SocketRoomDTO socketRoomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), getMusicsByIds(room.getMusicsIds()));
+            publishRoomSocket(socketRoomDTO);
+
+            response.setCorrectAnswer(true);
+        } else {
+            response.setCorrectAnswer(false);
+        }
+
+        return response;
     }
 
     private void publishRoomSocket(SocketRoomDTO room) {
