@@ -153,6 +153,8 @@ public class RoomService {
         payload.put("musicPreview", nextMusic.getPreview());
         payload.put("startTime", startTime);
         payload.put("duration", roundDuration);
+        payload.put("currentMusicIndex", musicIds.indexOf(nextMusic.getId()) + 1);
+        payload.put("nbMusics", musicIds.size());
         messagingTemplate.convertAndSend("/room/" + roomId + "/round/start", payload);
 
         SocketRoomDTO socketRoomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), List.of());

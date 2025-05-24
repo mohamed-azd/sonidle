@@ -3,7 +3,6 @@
 import {useRoomSocket} from "~/composables/useRoomSocket";
 import {useRoomStore} from "~/stores/room";
 import {Client} from '@stomp/stompjs';
-import {usePlaylistStore} from "~/stores/playlist";
 import GameTimer from "~/components/room/game/GameTimer.vue";
 import roomService from "~/services/roomService";
 import type {GuessResponseDTO} from "~/types/dtos/guessResponseDTO";
@@ -12,14 +11,16 @@ import RoundResultModal from "~/components/room/game/roundResultModal.vue";
 
 const router = useRouter();
 const overlay = useOverlay();
-
 let client: Client | undefined;
 let currentMusic: HTMLAudioElement | undefined;
+const roundResultModal = overlay.create(RoundResultModal);
+
 const answer = ref("");
 const isWrongAnswer = ref(false);
 const resetTimerCounter = ref(0)
 const startTime = ref(0);
-const roundResultModal = overlay.create(RoundResultModal);
+const currentMusicIndex = ref(0);
+const nbMusics = ref(0);
 
 
 onMounted(() => {
@@ -33,6 +34,9 @@ onMounted(() => {
     },
     onRoundStart: (data) => {
       roundResultModal.close();
+      isWrongAnswer.value = false;
+      currentMusicIndex.value = data.currentMusicIndex;
+      nbMusics.value = data.nbMusics;
       startTimer(data.startTime, data.duration);
       playMusic(data.musicPreview);
     },
@@ -97,9 +101,7 @@ function startTimer(roundStartTime: number, duration: number) {
   <UApp>
     <div class="h-screen">
       <div class="absolute left-6 top-6 text-2xl text-primary font-bold flex items-center gap-2">
-        <p class=" w-[2vw] h-[2vw] flex justify-center items-center text-xl">
-          {{ usePlaylistStore().playlist.indexOf(usePlaylistStore().currentMusic) + 1 }}</p>
-        <p class="text-primary-600"> / {{ usePlaylistStore().playlist.length }}</p>
+        <p>{{ currentMusicIndex }}<span class="text-primary-600"> / {{ nbMusics }}</span></p>
       </div>
       <div class="h-1/6">
         <NuxtImg class="mx-auto h-full" src="logo2.png" quality="100"></NuxtImg>
