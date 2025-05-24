@@ -19,5 +19,7 @@
     "starting_game": "Starting the game...",
     "validate": "Submit",
     "guess_placeholder": "Enter your answer here...",
-    "player_score": "{score} pts"
+    "player_score": "{score} pts",
+    "next_round": "Next round",
+    "answer": "Answer"
 }

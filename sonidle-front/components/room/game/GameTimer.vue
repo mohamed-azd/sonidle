@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const props = defineProps({
+  startTime: Number,
   duration: Number,
   resetTrigger: Number,
 })
@@ -8,8 +9,8 @@ const emit = defineEmits<{
   (e: 'finished'): void;
 }>();
 
-const timer = ref(props.duration)
-let interval;
+const timer = ref(0)
+let interval : NodeJS.Timeout;
 
 const radius = 45
 const circumference = 2 * Math.PI * radius
@@ -21,23 +22,30 @@ const strokeOffset = computed(() => {
 
 
 watch(() => props.resetTrigger, (newValue) => {
-  if (newValue > 0) {
+  if (newValue && newValue > 0) {
     startTimer();
   }
 }, { immediate: true });
 
 function startTimer() {
   clearInterval(interval)
-  timer.value = props.duration
-  interval = setInterval(() => {
-    if (timer.value > 0) {
-      timer.value -= 1
-    } else {
-      clearInterval(interval)
-      emit('finished')
-    }
-  }, 1000)
+  const wait = props.startTime - Date.now()
+
+  setTimeout(() => {
+    interval = setInterval(() => {
+      const now = Date.now()
+      const endTime = props.startTime + props.duration * 1000
+      const secondsLeft = Math.ceil((endTime - now) / 1000)
+      timer.value = Math.max(0, secondsLeft)
+
+      if (secondsLeft <= 0) {
+        clearInterval(interval)
+        emit('finished')
+      }
+    }, 1000)
+  }, Math.max(0, wait))
 }
+
 
 onUnmounted(() => {
   clearInterval(interval)

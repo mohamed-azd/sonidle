@@ -3,6 +3,7 @@ export interface Room {
     settings: RoomSettings;
     players: Player[];
     playing: boolean;
+    gameStarted: boolean;
 }
 
 export interface RoomSettings {
@@ -30,5 +31,6 @@ export interface Music {
     titleShort: string;
     preview: string;
     artist: string;
-    played: boolean
+    played: boolean;
+    picture: string;
 }

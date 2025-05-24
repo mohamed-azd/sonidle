@@ -14,6 +14,7 @@ public class Music implements Serializable {
     private String titleShort;
     private String artist;
     private String preview;
+    private String picture;
     private boolean isPlayed;
 
     public UUID getId() {
@@ -62,5 +63,13 @@ public class Music implements Serializable {
 
     public void setPlayed(boolean played) {
         isPlayed = played;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 }

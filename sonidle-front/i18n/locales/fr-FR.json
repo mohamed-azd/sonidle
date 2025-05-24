@@ -19,5 +19,7 @@
     "starting_game": "Lancement de la partie...",
     "validate": "Valider",
     "guess_placeholder": "Entrez votre réponse ici...",
-    "player_score": "{score} pts"
+    "player_score": "{score} pts",
+    "next_round": "Prochaine manche",
+    "answer": "Réponse"
 }

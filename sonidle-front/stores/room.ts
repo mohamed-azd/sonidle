@@ -9,7 +9,8 @@ const defaultRoom: Room = {
         nbPlayerMax: 0,
         genres: []
     },
-    playing: false
+    playing: false,
+    gameStarted: false
 }
 
 export const useRoomStore = defineStore("room", () => {

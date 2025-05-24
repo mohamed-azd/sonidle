@@ -5,14 +5,13 @@ import com.sonidle.game.payload.UpdateGenresPayload;
 import com.sonidle.game.service.RoomService;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class WebSocketController {
+public class RoomWSController {
     private final RoomService roomService;
 
-    public WebSocketController(RoomService roomService) {
+    public RoomWSController(RoomService roomService) {
         this.roomService = roomService;
     }
 

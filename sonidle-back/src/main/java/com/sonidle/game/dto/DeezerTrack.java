@@ -10,6 +10,7 @@ public class DeezerTrack {
     private String titleShort;
     private String preview;
     private DeezerArtist artist;
+    private DeezerAlbum album;
 
     public Music toMusic() {
         Music music = new Music();
@@ -17,6 +18,12 @@ public class DeezerTrack {
         music.setTitleShort(titleShort);
         music.setArtist(artist.getName());
         music.setPreview(preview);
+
+        if (album != null) {
+            music.setPicture(album.getCover());
+        } else {
+            music.setPicture(artist.getPicture());
+        }
 
         return music;
     }
@@ -59,6 +66,14 @@ public class DeezerTrack {
 
     public void setArtist(DeezerArtist artist) {
         this.artist = artist;
+    }
+
+    public DeezerAlbum getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(DeezerAlbum album) {
+        this.album = album;
     }
 
     public boolean isValid() {

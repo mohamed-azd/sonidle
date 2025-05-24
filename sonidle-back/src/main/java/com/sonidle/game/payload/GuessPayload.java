@@ -4,7 +4,6 @@ import java.util.UUID;
 
 public class GuessPayload {
     private UUID playerId;
-    private UUID musicId;
     private String answer;
 
     public UUID getPlayerId() {
@@ -13,14 +12,6 @@ public class GuessPayload {
 
     public void setPlayerId(UUID playerId) {
         this.playerId = playerId;
-    }
-
-    public UUID getMusicId() {
-        return musicId;
-    }
-
-    public void setMusicId(UUID musicId) {
-        this.musicId = musicId;
     }
 
     public String getAnswer() {

@@ -22,12 +22,12 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
-import java.util.Locale;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -120,12 +120,56 @@ public class RoomService {
 
     public void getRoomInSocket(UUID roomId) throws NotFoundException {
         Room room = getRoom(roomId);
-        publishRoomSocket(SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), getMusicsByIds(room.getMusicsIds())));
+        publishRoomSocket(SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), List.of()));
     }
+
+    public void nextRound(UUID roomId) throws NotFoundException {
+        Room room = getRoom(roomId);
+
+        if (!room.isGameStarted()) {
+            room.setGameStarted(true);
+        }
+
+        List<UUID> musicIds = room.getMusicsIds();
+
+        Music nextMusic = getMusicsByIds(musicIds).stream()
+                .filter(music -> !music.isPlayed())
+                .findFirst()
+                .orElse(null);
+
+        if (nextMusic == null) {
+            messagingTemplate.convertAndSend("/room/" + roomId + "/end", "Game finished");
+            return;
+        }
+
+        nextMusic.setPlayed(true);
+        musicRepository.save(nextMusic);
+        room.setCurrentMusicId(nextMusic.getId());
+        roomRepository.save(room);
+
+        Map<String, Object> payload = new HashMap<>();
+        long startTime = System.currentTimeMillis();
+        int roundDuration = room.getSettings().getRoundDuration();
+        payload.put("musicPreview", nextMusic.getPreview());
+        payload.put("startTime", startTime);
+        payload.put("duration", roundDuration);
+        messagingTemplate.convertAndSend("/room/" + roomId + "/round/start", payload);
+
+        SocketRoomDTO socketRoomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), List.of());
+        publishRoomSocket(socketRoomDTO);
+
+        long delayInMs = startTime + roundDuration * 1000L - System.currentTimeMillis();
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.schedule(() -> {
+            messagingTemplate.convertAndSend("/room/" + roomId + "/round/end", nextMusic);
+        }, delayInMs, TimeUnit.MILLISECONDS);
+    }
+
 
     public GuessDTO guess(UUID roomId, GuessPayload payload) throws NotFoundException {
         GuessDTO response = new GuessDTO();
-        Music musicToGuess = musicRepository.findById(payload.getMusicId()).orElseThrow(NotFoundException::new);
+        Room room = getRoom(roomId);
+        Music musicToGuess = musicRepository.findById(room.getCurrentMusicId()).orElseThrow(NotFoundException::new);
         int score = 0;
 
         String answer = normalize(payload.getAnswer());
@@ -143,8 +187,7 @@ public class RoomService {
             player.setScore(player.getScore() + score);
             playerRepository.save(player);
 
-            Room room = getRoom(roomId);
-            SocketRoomDTO socketRoomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), getMusicsByIds(room.getMusicsIds()));
+            SocketRoomDTO socketRoomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), List.of());
             publishRoomSocket(socketRoomDTO);
 
             response.setCorrectAnswer(true);

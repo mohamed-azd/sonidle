@@ -24,5 +24,9 @@ export default {
 
     async guess(roomId: string, payload: GuessPayload) {
         return await useApi<GuessResponseDTO>(`/rooms/${roomId}/guess`, { method: "POST", body: payload });
+    },
+
+    async nextRound(roomId: string) {
+        return await useApi<void>(`/rooms/${roomId}/round/next`, { method: "POST" });
     }
 }

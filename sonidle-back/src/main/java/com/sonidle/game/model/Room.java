@@ -16,6 +16,8 @@ public class Room implements Serializable {
     private List<UUID> playersIds;
     private List<UUID> musicsIds;
     private boolean isPlaying;
+    private UUID currentMusicId;
+    private boolean gameStarted;
 
     public UUID getId() {
         return id;
@@ -63,5 +65,21 @@ public class Room implements Serializable {
 
     public void setPlaying(boolean playing) {
         isPlaying = playing;
+    }
+
+    public UUID getCurrentMusicId() {
+        return currentMusicId;
+    }
+
+    public void setCurrentMusicId(UUID currentMusicId) {
+        this.currentMusicId = currentMusicId;
+    }
+
+    public boolean isGameStarted() {
+        return gameStarted;
+    }
+
+    public void setGameStarted(boolean gameStarted) {
+        this.gameStarted = gameStarted;
     }
 }

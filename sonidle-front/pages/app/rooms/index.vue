@@ -44,16 +44,18 @@ onMounted(() => {
         }
       });
 
-      client = useRoomSocket(useRoomStore().room.id, (updatedRoom) => {
-        console.log(updatedRoom)
-        useRoomStore().room = updatedRoom;
-        const selectedGenresIds = updatedRoom.settings.genres.map(selectedGenre => selectedGenre.id);
-        genres.value.forEach((genre) => {
-          genre.isSelected = selectedGenresIds.includes(genre.id);
+      client = useRoomSocket({
+        roomId: useRoomStore().room.id,
+        onRoomUpdate : (updatedRoom) => {
+          useRoomStore().room = updatedRoom;
+          const selectedGenresIds = updatedRoom.settings.genres.map(selectedGenre => selectedGenre.id);
+          genres.value.forEach((genre) => {
+            genre.isSelected = selectedGenresIds.includes(genre.id);
 
-        })
-        if (useRoomStore().room.playing) {
-          router.push(GAME_ROUTE);
+          })
+          if (useRoomStore().room.playing) {
+            router.push(GAME_ROUTE);
+          }
         }
       })
     })

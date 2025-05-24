@@ -12,6 +12,7 @@ public class SocketRoomDTO {
     private List<Player> players;
     private List<Music> playlist;
     private boolean isPlaying;
+    private boolean isGameStarted;
 
     public static SocketRoomDTO toDTO(Room room, List<Player> players, List<Music> musics) {
         SocketRoomDTO dto = new SocketRoomDTO();
@@ -21,6 +22,7 @@ public class SocketRoomDTO {
         dto.players = players;
         dto.playlist = musics;
         dto.isPlaying = room.isPlaying();
+        dto.isGameStarted = room.isGameStarted();
 
         return dto;
     }
@@ -71,5 +73,13 @@ public class SocketRoomDTO {
 
     public void setPlaying(boolean playing) {
         isPlaying = playing;
+    }
+
+    public boolean isGameStarted() {
+        return isGameStarted;
+    }
+
+    public void setGameStarted(boolean gameStarted) {
+        isGameStarted = gameStarted;
     }
 }
