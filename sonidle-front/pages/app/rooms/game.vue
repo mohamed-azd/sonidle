@@ -17,6 +17,7 @@ const currentMusic = ref<HTMLAudioElement>();
 const roundResultModal = overlay.create(RoundResultModal);
 
 const answer = ref("");
+const isGuessed = ref(false);
 const isWrongAnswer = ref(false);
 const resetTimerCounter = ref(0)
 const startTime = ref(0);
@@ -46,6 +47,7 @@ onMounted(() => {
       roundResultModal.open({
         music: music,
       })
+      isGuessed.value = false;
     },
     onGameEnd: () => {
       router.push(`/rooms/end`);
@@ -79,10 +81,10 @@ function submitAnswer() {
     playerId: usePlayerStore().player.id
   }).then(({data}) => {
     const response = data.value as GuessResponseDTO;
+    isWrongAnswer.value = !response.correctAnswer;
     if (response.correctAnswer) {
-      isWrongAnswer.value = false;
-    } else {
-      isWrongAnswer.value = true;
+      answer.value = "";
+      isGuessed.value = true;
     }
   })
 }
@@ -117,13 +119,15 @@ function startTimer(roundStartTime: number, duration: number) {
           <GameTimer :duration="useRoomStore().room.settings.gameDuration ?? 30" :startTime="startTime"
                      :resetTrigger="resetTimerCounter"/>
 
-          <div class="flex justify-center items-start gap-2 w-1/4">
+          <div class="flex justify-center items-start gap-2 w-1/4" v-if="!isGuessed">
             <UFormField class="flex-1" :error="isWrongAnswer">
               <UInput class="w-full" size="xl" :placeholder="$t('guess_placeholder')" v-model="answer"/>
             </UFormField>
 
             <UButton :label="$t('validate')" size="xl" @click="submitAnswer"/>
           </div>
+
+          <p v-else class="text-lg italic">{{ $t('right_answer') }}</p>
         </div>
 
         <div class="h-3/6 flex justify-center scroll-auto gap-8 px-8 w-screen">
@@ -140,7 +144,6 @@ function startTimer(roundStartTime: number, duration: number) {
           </div>
         </div>
       </div>
-
     </div>
   </UApp>
 </template>

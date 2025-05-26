@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -130,6 +129,10 @@ public class RoomService {
             room.setGameStarted(true);
         }
 
+       List<Player> players = getPlayersByIds(room.getPlayersIds());
+        players.forEach(player -> player.setGuessed(false));
+        playerRepository.saveAll(players);
+
         List<UUID> musicIds = room.getMusicsIds();
 
         Music nextMusic = getMusicsByIds(musicIds).stream()
@@ -171,21 +174,30 @@ public class RoomService {
     public GuessDTO guess(UUID roomId, GuessPayload payload) throws NotFoundException {
         GuessDTO response = new GuessDTO();
         Room room = getRoom(roomId);
+        Player player = playerRepository.findById(payload.getPlayerId()).orElseThrow(NotFoundException::new);
+
+        if (player.hasGuessed()) {
+            response.setCorrectAnswer(false);
+            return response;
+        }
+
         Music musicToGuess = musicRepository.findById(room.getCurrentMusicId()).orElseThrow(NotFoundException::new);
         int score = 0;
 
-        String answer = normalize(payload.getAnswer());
-        String title = normalize(musicToGuess.getTitleShort());
-        String artist = normalize(musicToGuess.getArtist());
+        String answer = normalizeForGuess(payload.getAnswer());
+        String expectedTitle = normalizeForGuess(musicToGuess.getTitleShort());
+        String expectedArtist = normalizeForGuess(musicToGuess.getArtist());
 
-        if (answer.contains(title)) {
+        boolean titleMatched = strictMatch(answer, expectedTitle);
+        boolean artistMatched = strictMatch(answer, expectedArtist);
+
+        if (titleMatched) {
             score += 2;
-
-            if (answer.contains(artist)) {
+            if (artistMatched) {
                 score += 1;
             }
 
-            Player player = playerRepository.findById(payload.getPlayerId()).orElseThrow(NotFoundException::new);
+            player.setGuessed(true);
             player.setScore(player.getScore() + score);
             playerRepository.save(player);
 
@@ -219,11 +231,34 @@ public class RoomService {
     }
 
 
-    public static String normalize(String input) {
-        if (input == null) return null;
-        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        return pattern.matcher(normalized).replaceAll("").toLowerCase(Locale.ROOT);
+    private String normalizeForGuess(String input) {
+        if (input == null) return "";
+
+        input = input.replaceAll("\\(.*?\\)", "").replaceAll("\\[.*?\\]", "");
+
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
+        normalized = normalized.replaceAll("[^\\p{IsAlphabetic}\\p{IsDigit}\\s]", "")
+                .toLowerCase(Locale.ROOT);
+
+        return normalized.trim().replaceAll("\\s+", " ");
     }
 
+
+
+    private static boolean strictMatch(String guess, String expected) {
+        Set<String> guessWords = new HashSet<>(Arrays.asList(guess.split(" ")));
+        Set<String> expectedWords = new HashSet<>(Arrays.asList(expected.split(" ")));
+
+        int common = 0;
+        for (String word : expectedWords) {
+            if (guessWords.contains(word)) {
+                common++;
+            }
+        }
+
+        double matchRatio = (double) common / expectedWords.size();
+        return matchRatio >= 0.7;
+    }
 }

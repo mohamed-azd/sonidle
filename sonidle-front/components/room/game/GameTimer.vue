@@ -82,9 +82,10 @@ onUnmounted(() => {
       />
     </svg>
 
-    <p class="absolute text-4xl font-bold text-primary">
+    <p class="absolute text-4xl font-bold text-primary" v-if="timer">
       {{ timer }}
     </p>
+    <UIcon name="i-lucide-loader-circle" class="animate-spin absolute text-4xl font-bold text-primary" v-else/>
   </div>
 </template>
 

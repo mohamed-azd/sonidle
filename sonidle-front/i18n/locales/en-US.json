@@ -21,5 +21,6 @@
     "guess_placeholder": "Enter your answer here...",
     "player_score": "{score} pts",
     "next_round": "Next round",
-    "answer": "Answer"
+    "answer": "Answer",
+    "right_answer": "Right answer !"
 }

@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.UUID;
 
 @RedisHash("Player")
@@ -13,6 +14,7 @@ public class Player implements Serializable {
     private String name;
     private int score;
     private boolean isOwner;
+    private boolean guessed;
 
     public UUID getId() {
         return id;
@@ -44,5 +46,13 @@ public class Player implements Serializable {
 
     public void setOwner(boolean owner) {
         isOwner = owner;
+    }
+
+    public boolean hasGuessed() {
+        return guessed;
+    }
+
+    public void setGuessed(boolean guessed) {
+        this.guessed = guessed;
     }
 }
