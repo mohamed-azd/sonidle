@@ -22,7 +22,7 @@ function submit() {
 </script>
 
 <template>
-  <UModal v-model="isOpen" :close="true">
+  <UModal v-model="isOpen" :close="false">
     <template #header>
       <h2>{{ $t("answer") }}</h2>
     </template>

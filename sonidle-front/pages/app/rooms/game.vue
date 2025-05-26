@@ -8,11 +8,12 @@ import roomService from "~/services/roomService";
 import type {GuessResponseDTO} from "~/types/dtos/guessResponseDTO";
 import PlayerCard from "~/components/room/PlayerCard.vue";
 import RoundResultModal from "~/components/room/game/roundResultModal.vue";
+import AudioVolume from "~/components/room/game/audioVolume.vue";
 
 const router = useRouter();
 const overlay = useOverlay();
 let client: Client | undefined;
-let currentMusic: HTMLAudioElement | undefined;
+const currentMusic = ref<HTMLAudioElement>();
 const roundResultModal = overlay.create(RoundResultModal);
 
 const answer = ref("");
@@ -41,7 +42,7 @@ onMounted(() => {
       playMusic(data.musicPreview);
     },
     onRoundEnd: (music) => {
-      currentMusic?.remove();
+      currentMusic.value?.remove();
       roundResultModal.open({
         music: music,
       })
@@ -87,8 +88,9 @@ function submitAnswer() {
 }
 
 function playMusic(url: string) {
-  currentMusic = new Audio(url);
-  currentMusic.play();
+  currentMusic.value = new Audio(url);
+  currentMusic.value.volume = useUserPreferencesStore().volume != undefined ? useUserPreferencesStore().volume : 100
+  currentMusic.value.play();
 }
 
 function startTimer(roundStartTime: number, duration: number) {
@@ -105,6 +107,9 @@ function startTimer(roundStartTime: number, duration: number) {
       </div>
       <div class="h-1/6">
         <NuxtImg class="mx-auto h-full" src="logo2.png" quality="100"></NuxtImg>
+      </div>
+      <div class="absolute right-6 top-6 w-1/6">
+        <AudioVolume :audio="currentMusic" />
       </div>
 
       <div class="flex flex-col items-center  h-5/6">
