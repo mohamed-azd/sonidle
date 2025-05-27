@@ -2,6 +2,7 @@ export interface Room {
     id: string;
     settings: RoomSettings;
     players: Player[];
+    playlist: Music[]
     playing: boolean;
     gameStarted: boolean;
 }

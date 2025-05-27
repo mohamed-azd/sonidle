@@ -4,10 +4,10 @@ import type {Music} from "~/types/models";
 import roomService from "~/services/roomService";
 import {useRoomStore} from "~/stores/room";
 
-const props = defineProps({
+const props = defineProps<{
   modelValue: Boolean,
-  music: Object
-});
+  music: Music
+}>();
 const emit = defineEmits(["update:modelValue"]);
 
 const isOpen = computed({
@@ -28,10 +28,10 @@ function submit() {
     </template>
     <template #body>
       <div class="flex flex-col items-center gap-6">
-        <NuxtImg :src="(music as Music).picture " quality="100" class="w-1/2" />
+        <NuxtImg :src="music.picture " quality="100" class="w-1/2" />
         <div class="flex flex-col items-center">
-          <p class="text-sm font-semibold">{{ (music as Music).title }}</p>
-          <p class="text-sm font-light">{{ (music as Music).artist }}</p>
+          <p class="text-sm font-semibold">{{ music.title }}</p>
+          <p class="text-sm font-light">{{ music.artist }}</p>
         </div>
       </div>
     </template>

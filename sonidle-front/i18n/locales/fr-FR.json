@@ -22,5 +22,9 @@
     "player_score": "{score} pts",
     "next_round": "Prochaine manche",
     "answer": "Réponse",
-    "right_answer": "Bonne réponse !"
+    "right_answer": "Bonne réponse !",
+    "home_title": "Sonidle - Accueil",
+    "room_tab_title": "Sonidle - Salon de {ownerName}",
+    "game_tab_title" : "Sonidle - En jeu",
+    "results_tab_title": "Sonidle - Résultats de la partie"
 }

@@ -13,6 +13,11 @@ type MusicGenreCheckBox = MusicGenre & {
 }
 
 const router = useRouter();
+const {t} = useI18n();
+
+useHead({
+  title: t('room_tab_title', {ownerName: useRoomStore().room.players.find(player => player.owner)?.name})
+})
 
 let client: Client | undefined;
 const isRoomCodeCopied = ref(false)

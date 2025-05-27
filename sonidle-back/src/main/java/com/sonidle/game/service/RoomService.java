@@ -141,7 +141,8 @@ public class RoomService {
                 .orElse(null);
 
         if (nextMusic == null) {
-            messagingTemplate.convertAndSend("/room/" + roomId + "/end", "Game finished");
+            SocketRoomDTO roomDto = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), getMusicsByIds(room.getMusicsIds()));
+            messagingTemplate.convertAndSend("/room/" + roomId + "/end", roomDto);
             return;
         }
 
@@ -160,7 +161,7 @@ public class RoomService {
         payload.put("nbMusics", musicIds.size());
         messagingTemplate.convertAndSend("/room/" + roomId + "/round/start", payload);
 
-        SocketRoomDTO socketRoomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), List.of());
+        SocketRoomDTO socketRoomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), getMusicsByIds(room.getMusicsIds()));
         publishRoomSocket(socketRoomDTO);
 
         long delayInMs = startTime + roundDuration * 1000L - System.currentTimeMillis();

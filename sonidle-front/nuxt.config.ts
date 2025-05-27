@@ -7,7 +7,10 @@ export default defineNuxtConfig({
     css: ['assets/css/main.css'],
     app: {
         head: {
-            link: [{ rel: 'icon', type: 'image/png', href: 'logo_without_text.png' }],
+            link: [
+                { rel: 'icon', type: 'image/png', href: 'logo_without_text.png' },
+                { rel: 'preload', as: 'image/png', href: '/logo2.png' }
+            ],
             script: [
                 {
                     innerHTML: 'window.global = window;',

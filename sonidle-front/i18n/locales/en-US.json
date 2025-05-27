@@ -22,5 +22,9 @@
     "player_score": "{score} pts",
     "next_round": "Next round",
     "answer": "Answer",
-    "right_answer": "Right answer !"
+    "right_answer": "Right answer !",
+    "home_tab_title": "Sonidle - Home",
+    "room_tab_title": "Sonidle - {ownerName}'s room",
+    "game_tab_title" : "Sonidle - In game",
+    "results_tab_title": "Sonidle - Game results"
 }

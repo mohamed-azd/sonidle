@@ -10,8 +10,14 @@ import PlayerCard from "~/components/room/PlayerCard.vue";
 import RoundResultModal from "~/components/room/game/roundResultModal.vue";
 import AudioVolume from "~/components/room/game/audioVolume.vue";
 
+const {t} = useI18n();
 const router = useRouter();
 const overlay = useOverlay();
+
+useHead({
+  title: t('game_tab_title')
+})
+
 let client: Client | undefined;
 const currentMusic = ref<HTMLAudioElement>();
 const roundResultModal = overlay.create(RoundResultModal);
@@ -50,7 +56,7 @@ onMounted(() => {
       isGuessed.value = false;
     },
     onGameEnd: () => {
-      router.push(`/rooms/end`);
+      router.push('app/rooms/end');
     },
     onConnect: () => {
       refreshRoom();
