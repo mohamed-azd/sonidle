@@ -13,11 +13,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DeezerService implements MusicPlatformService {
     private final WebClient webClient;
     private final static int NB_MUSICS_PER_GAME = 10;
+    private final static int ALL_GENRES_ID = 0;
 
     public DeezerService(WebClient.Builder webClientBuilder, @Value("${deezer.api.url}") String deezerApiUrl) {
         this.webClient = webClientBuilder.baseUrl(deezerApiUrl)
@@ -32,7 +34,7 @@ public class DeezerService implements MusicPlatformService {
                 .retrieve()
                 .bodyToMono(DeezerGenre.class)
                 .block();
-        return response != null ? response.getData() : List.of();
+        return response != null ? response.getData().stream().filter(genre -> genre.getId() != ALL_GENRES_ID).collect(Collectors.toList()) : List.of();
     }
 
     @Override
@@ -40,7 +42,7 @@ public class DeezerService implements MusicPlatformService {
         List<Music> musics = new ArrayList<>();
 
         for (int i = 0; i < NB_MUSICS_PER_GAME; i++) {
-            int randomGenreId = 0;
+            int randomGenreId = ALL_GENRES_ID;
             if (genres != null && !genres.isEmpty()) {
                 int rand = (int) (Math.random() * genres.size());
                 randomGenreId = genres.get(rand).getId();
