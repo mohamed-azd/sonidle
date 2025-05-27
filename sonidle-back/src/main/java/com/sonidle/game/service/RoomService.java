@@ -161,7 +161,7 @@ public class RoomService {
         payload.put("nbMusics", musicIds.size());
         messagingTemplate.convertAndSend("/room/" + roomId + "/round/start", payload);
 
-        SocketRoomDTO socketRoomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), getMusicsByIds(room.getMusicsIds()));
+        SocketRoomDTO socketRoomDTO = SocketRoomDTO.toDTO(room, getPlayersByIds(room.getPlayersIds()), List.of());
         publishRoomSocket(socketRoomDTO);
 
         long delayInMs = startTime + roundDuration * 1000L - System.currentTimeMillis();
