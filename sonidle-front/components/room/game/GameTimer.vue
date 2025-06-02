@@ -6,7 +6,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{
-  (e: 'finished'): void;
+  (e: 'timerStarted'): void;
 }>();
 
 const timer = ref(0)
@@ -32,6 +32,7 @@ function startTimer() {
   const wait = props.startTime - Date.now()
 
   setTimeout(() => {
+    emit('timerStarted')
     interval = setInterval(() => {
       const now = Date.now()
       const endTime = props.startTime + props.duration * 1000
@@ -40,7 +41,6 @@ function startTimer() {
 
       if (secondsLeft <= 0) {
         clearInterval(interval)
-        emit('finished')
       }
     }, 1000)
   }, Math.max(0, wait))

@@ -152,7 +152,7 @@ public class RoomService {
         roomRepository.save(room);
 
         Map<String, Object> payload = new HashMap<>();
-        long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis() + 1000;
         int roundDuration = room.getSettings().getRoundDuration();
         payload.put("musicPreview", nextMusic.getPreview());
         payload.put("startTime", startTime);

@@ -28,6 +28,7 @@ const isWrongAnswer = ref(false);
 const resetTimerCounter = ref(0)
 const startTime = ref(0);
 const currentMusicIndex = ref(0);
+const currentMusicPreview = ref('');
 const nbMusics = ref(0);
 
 
@@ -44,9 +45,9 @@ onMounted(() => {
       roundResultModal.close();
       isWrongAnswer.value = false;
       currentMusicIndex.value = data.currentMusicIndex;
+      currentMusicPreview.value = data.musicPreview;
       nbMusics.value = data.nbMusics;
-      startTimer(data.startTime, data.duration);
-      playMusic(data.musicPreview);
+      startTimer(data.startTime);
     },
     onRoundEnd: (music) => {
       currentMusic.value?.remove();
@@ -95,13 +96,13 @@ function submitAnswer() {
   })
 }
 
-function playMusic(url: string) {
-  currentMusic.value = new Audio(url);
-  currentMusic.value.volume = useUserPreferencesStore().volume != undefined ? useUserPreferencesStore().volume : 100
+function playMusic() {
+  currentMusic.value = new Audio(currentMusicPreview.value);
+  currentMusic.value.volume = useUserPreferencesStore().volume != undefined ? useUserPreferencesStore().volume : 1
   currentMusic.value.play();
 }
 
-function startTimer(roundStartTime: number, duration: number) {
+function startTimer(roundStartTime: number) {
   startTime.value = roundStartTime;
   resetTimerCounter.value++
 }
@@ -123,7 +124,7 @@ function startTimer(roundStartTime: number, duration: number) {
       <div class="flex flex-col items-center  h-5/6">
         <div class="flex flex-col gap-10 items-center justify-center w-full h-4/6">
           <GameTimer :duration="useRoomStore().room.settings.gameDuration ?? 30" :startTime="startTime"
-                     :resetTrigger="resetTimerCounter"/>
+                     :resetTrigger="resetTimerCounter" @timer-started="() => playMusic()"/>
 
           <div class="flex justify-center items-start gap-2 w-1/4" v-if="!isGuessed">
             <UFormField class="flex-1" :error="isWrongAnswer">
