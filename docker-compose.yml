@@ -7,19 +7,52 @@ services:
     networks:
       - sonidle-back-net
 
-  redis-insight:
-    image: redis/redisinsight:latest
-    restart: always
+  back:
+    container_name: back
+    build:
+      context: ./sonidle-back
     ports:
-      - "5540:5540"
-    volumes:
-      - redis-insight:/data
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 8080
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      DEEZER_API_URL: https://api.deezer.com
     networks:
+      - sonidle-back-net
+
+
+  front:
+    container_name: front
+    build:
+      context: ./sonidle-front
+    ports:
+      - "3000:3000"
+    networks:
+      - sonidle-front-net
+
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - back
+      - front
+    restart: unless-stopped
+    networks:
+      - sonidle-front-net
       - sonidle-back-net
 
 volumes:
   redis-insight:
 
 networks:
+  sonidle-front-net:
+    driver: bridge
   sonidle-back-net:
     driver: bridge
